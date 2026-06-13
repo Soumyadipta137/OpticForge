@@ -2,12 +2,20 @@ import math
 from backend import xp
 from PIL import Image as Img
 
+def coordArray2DTransform(x:xp.ndarray,y:xp.ndarray,centre:tuple[float,float]=(0.0,0.0),theta:float = 0.0):
+    dx , dy = x-centre[0] , y-centre[1]
+    thetaArray = xp.full(x.shape,theta,xp.float32)
+    cosT , sinT = xp.cos(thetaArray) , xp.sin(thetaArray)
+    rx = dx * cosT + dy * sinT
+    ry = -dx * sinT + dy * cosT
+    return (rx,ry)
+
 class Image:
     """Wrapper Class for PIL.Imgae.Image and saves image internally as xp.array to save repeated conversion"""
     @classmethod
     def deImagifier(cls,image:Img.Image) -> xp.ndarray:
         """This Converts Pillow Image into Numpy array(Height,width,RGB)"""
-        return xp.array(image)
+        return xp.array(image).astype(xp.float32)
     
     @classmethod
     def imagifier(cls,pixelArray:xp.ndarray) -> Img.Image:
@@ -15,10 +23,8 @@ class Image:
         return Img.fromarray(pixelArray.astype(xp.uint8))
 
     def __init__(self,filename,opacity = None):
-        Ixput = Img.open(filename)
-        self.pixelArray = self.deImagifier(Ixput)
-        if opacity is not None:
-            self.opacity(opacity)
+        self.pixelArray = self.deImagifier(Img.open(filename))
+        if opacity is not None:self.opacity(opacity)
 
     def save(self,filename):
         self.imagifier(self.pixelArray).save(filename)
@@ -33,13 +39,5 @@ class Image:
         if type(opacity)==int:
             opacity:float = opacity/255
         opacity:float = opacity-math.floor(opacity)
-        self.setMask(xp.full(self.pixelArray.shape, opacity, dtype=xp.float32))
+        self.alpha = opacity
 
-    def setMask(self,mask):self.mask=mask
-
-
-    
-
-class Mask:
-    def __init__(self,image,background,mask):pass
-        

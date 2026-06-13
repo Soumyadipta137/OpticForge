@@ -1,15 +1,23 @@
 import math
-from PIL import Image
+from utilities import Image
 
+class Effect:
+    pass
+
+    @classmethod
+    def apply(cls,image:Image,imageEffect:Effect,strength:float = 1.0) -> Image:pass
+
+    @classmethod
+    def applyToCopy(cls,image:Image,imageEffect:Effect,strength:float = 1.0) -> Image:pass
 
 def fisheye(x,y,relativeRadius = 0.8,rIndex = 0.85):
     #relativeRadius that many times the lower value (rad of circle fish eye makes)
     # rIndex is ratio of rad/roc(radius of curvature of fish eye) rIndex = -> semicircle
     
-    Ixput = Image.open("grid.jpg")
+    Ixput = Img.open("grid.jpg")
     width,height = Ixput.size
     print(width,height)
-    Output = Image.new("RGB",(width,height))
+    Output = Img.new("RGB",(width,height))
     pixelIn = Ixput.load()
     pixelOut = Output.load()
 
@@ -41,10 +49,10 @@ def halfFishEye(x,y,relativeRadius = 0.8,rIndex = 0.85):
     #relativeRadius that many times the lower value (rad of circle fish eye makes)
     # rIndex is ratio of rad/roc(radius of curvature of fish eye) rIndex = -> semicircle
     
-    Ixput = Image.open("grid.jpg")
+    Ixput = Img.open("grid.jpg")
     width,height = Ixput.size
     print(width,height)
-    Output = Image.new("RGB",(width,height))
+    Output = Img.new("RGB",(width,height))
     pixelIn = Ixput.load()
     pixelOut = Output.load()
 
