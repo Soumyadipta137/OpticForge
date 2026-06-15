@@ -8,7 +8,7 @@ A graphics and image-processing sandbox focused on:
 * coordinate remapping
 * optics simulation
 * procedural filters
-* signal-processing-inspired image effects
+* signal-processing-inspired image Transforms
 
 NOT a generic photo editor.
 
@@ -29,7 +29,7 @@ The goal is:
 * Negative
 * Vignette
 
-## Experimental Effects
+## Experimental Transforms
 
 * Edge Glow / Local Contrast Enhancement
 * Physically-inspired FishEye Lens Distortion
@@ -70,7 +70,7 @@ Focus Areas:
 * coordinate transformations
 * optical distortions
 * procedural image manipulation
-* mathematically-derived effects
+* mathematically-derived Transforms
 * signal-processing filters
 * experimental rendering techniques
 
@@ -100,7 +100,7 @@ image = bloom(image)
 
 Goal:
 
-* stackable effects
+* stackable Transforms
 * modular architecture
 * reusable functions
 
@@ -121,7 +121,7 @@ This becomes the foundation for:
 * swirl
 * kaleidoscope
 * warping
-* tunnel effects
+* tunnel Transforms
 * future shaders
 
 ---
@@ -151,7 +151,7 @@ Angular symmetry mapping.
 
 Cartesian <-> Polar remapping.
 
-### Tunnel Effect
+### Tunnel Transform
 
 Radial logarithmic mapping.
 
@@ -173,7 +173,7 @@ Directional edge extraction using kernels.
 
 ## Emboss Filter
 
-Relief-style shading effect.
+Relief-style shading Transform.
 
 ## Sharpen Filter
 
@@ -306,7 +306,7 @@ Avoid:
 
 # Most Important Realization
 
-Most graphics effects are:
+Most graphics Transforms are:
 
 1. Coordinate manipulation
 2. Color-space manipulation

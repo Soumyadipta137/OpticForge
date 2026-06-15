@@ -1,3 +1,4 @@
+# utilities.py
 import math
 from backend import xp
 from PIL import Image as Img
@@ -24,7 +25,7 @@ class Image:
 
     def __init__(self,filename,opacity = None):
         self.pixelArray = self.deImagifier(Img.open(filename))
-        if opacity is not None:self.opacity(opacity)
+        self.opacity(opacity)
 
     def save(self,filename):
         self.imagifier(self.pixelArray).save(filename)
@@ -33,11 +34,20 @@ class Image:
         cls = type(self)
         newObj = cls.__new__(cls)
         newObj.pixelArray = self.pixelArray.copy()
+        newObj.opacity(self.alpha)
+        return newObj
+    
+    def shallowCopy(self):
+        cls = type(self)
+        newObj = cls.__new__(cls)
+        newObj.pixelArray = self.pixelArray
+        newObj.alpha = self.alpha
         return newObj
 
-    def opacity(self,opacity:float|int):
+    def opacity(self,opacity:float|int = None):
+        if opacity is None:opacity = 1.0
         if type(opacity)==int:
             opacity:float = opacity/255
-        opacity:float = opacity-math.floor(opacity)
+        if opacity != 1.0:opacity:float = opacity-math.floor(opacity)
         self.alpha = opacity
 

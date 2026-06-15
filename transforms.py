@@ -1,14 +1,6 @@
 import math
-from utilities import Image
-
-class Effect:
-    pass
-
-    @classmethod
-    def apply(cls,image:Image,imageEffect:Effect,strength:float = 1.0) -> Image:pass
-
-    @classmethod
-    def applyToCopy(cls,image:Image,imageEffect:Effect,strength:float = 1.0) -> Image:pass
+from utilities import Img
+from styles import Transform
 
 def fisheye(x,y,relativeRadius = 0.8,rIndex = 0.85):
     #relativeRadius that many times the lower value (rad of circle fish eye makes)

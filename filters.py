@@ -1,69 +1,24 @@
 # filters.py
 from backend import xp
-from utilities import Image
-
-class Filter:
-    @classmethod
-    def apply(cls,image:Image,Imagefilter:Filter,strength:float = 1.0):
-        """Universal pipeline to apply Filters to Original Image.\n Both pixel level and large scale pixel value manipulation possible using given Strength"""
-        if not isinstance(Imagefilter,Filter):raise TypeError("Only Accept filter type")
-        pixelArray = image.pixelArray
-        Imagefilter.imageSize(pixelArray.shape[0:2])
-        Imagefilter.init()
-
-        if not Imagefilter.massApply:
-            for y in range(pixelArray.shape[0]):
-                for x in range(pixelArray.shape[1]):
-                    pixelArray[y,x] = Imagefilter.hue(y,x,pixelArray[y,x])
-
-        else:
-            filterArray = Imagefilter.hue(pixelArray)
-
-        image.pixelArray = filterArray*strength + pixelArray*(1-strength)
-        return image
-
-    @classmethod
-    def applyToCopy(cls,image:Image,Imagefilter:Filter,strength:float = 1.0) -> Image:
-        """Universal pipeline to apply Filters to Copy of Image.\n Both pixel level and large scale pixel value manipulation possible using given Strength"""
-        return cls.apply(image.copy(),Imagefilter,strength)
+from styles import Filter,ArrayFilter,PixelFilter
 
 
-    def __init__(self):self.massApply:bool = True
-
-    def init(self):pass
-    
-    def imageSize(self,size = (0,0)):
-        self.width = size[1]
-        self.height = size[0]
-
-    def config(self):pass
-
-    def hue(self,y:int,x:int,colour = (0,0,0))->xp.ndarray:    #returns colour
-        """Returns a fresh filterArray with all filter applied to be applied on the original Image using given strength"""
-        pass
-        
-
-class Vignette(Filter):
+class Vignette(ArrayFilter):
     def __init__(self,relativeRadius = 0,relativeCenter:tuple[float,float] = None,p = 2):
         super().__init__()
         self.config(relativeRadius,relativeCenter,p)
 
-    def config(self,relativeRadius = 0,relativeCenter:tuple[float,float] = None,p = 2): # its 0 for smaller dimention 1 for larger dimmention and other range extrapolate
+    def config(self,relativeRadius = 0,relativeCenter:tuple[float,float] = (0.5,0.5),p = 2): # its 0 for smaller dimention 1 for larger dimmention and other range extrapolate
         self.rRadius = relativeRadius
         self.rCenter = relativeCenter
         self.parameterP = p
-
-    def init(self):
-        self.massApply=True
-        if self.width!=0 and self.height!=0 and self.rCenter is None:
-            self.center = (self.width//2,self.height//2)
-        else:
-            self.center = (self.width*self.rCenter[0],self.height*self.rCenter[1])
-        a = min(self.width,self.height)//2
-        b = max(self.width,self.height)//2
-        self.radius = a + self.rRadius*(b-a)
+        return self
 
     def hue(self,pixelArray:xp.ndarray)->xp.ndarray:
+        height,width = pixelArray.shape[0:2]
+        self.center = (width*self.rCenter[0],height*self.rCenter[1])
+        a, b = min(width,height)//2, max(width,height)//2
+        self.radius = a + self.rRadius*(b-a)
         Y,X = xp.indices(pixelArray.shape[0:2]).astype(xp.float32)
         distance = xp.sqrt((X-self.center[0])**2 + (Y-self.center[1])**2)
         v = xp.exp(-self.parameterP * (distance/self.radius)**4)
@@ -100,6 +55,7 @@ class Negative(Filter):
     
 class ColourFilter(Filter):
     def __init__(self,rgbColour = (0,0,0)):
+        super().__init__()
         self.massApply = True
         self.colour = rgbColour
 
@@ -107,12 +63,6 @@ class ColourFilter(Filter):
         filterArray = xp.full_like(pixelArray,self.colour)
         return filterArray
 
-
-# def grayscale(colour):
-#     return (sum(colour)//3,)*3
-
-# def negative(colour):
-#     return tuple([255-x for x in colour])
 
 # def edgeGlow(ixputFileName):
 #     Ixput = Image.open(ixputFileName)

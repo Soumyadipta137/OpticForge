@@ -1,3 +1,4 @@
+# masks.py
 import functools
 from backend import xp
 from utilities import coordArray2DTransform
@@ -45,7 +46,7 @@ class Mask:
         mask = functools.reduce(lambda a, b: a * b,args)
         return Mask(xp.clip(mask.astype(xp.float32),0.0, 1.0))
     
-class MaskSet(Mask):
+class MaskIntersection(Mask):
     def __init__(self,*args:Mask,inverse = False):
         self.maskList:list[Mask] = []
         self.inverse = inverse
@@ -75,7 +76,7 @@ class FullMask(Mask):
     def getMask(self, ndShape):return xp.full(ndShape,self.alpha,xp.float32,)
 
 class EllipseMask(Mask):
-    def __init__(self,rCentre:float|tuple[float, float],radii:float|tuple[float, float],
+    def __init__(self,rCentre:float|tuple[float, float]=(0.5,0.5),radii:float|tuple[float, float]=(1,1),
                 gradient: Gradient = Gradient(),theta: float = 0.0,inverse=False):
         self.rCentre = rCentre
         self.radii = radii
@@ -95,11 +96,16 @@ class EllipseMask(Mask):
 
 
 class CircleMask(EllipseMask):  #Radii According to smaller Side
-    def __init__(self,rCentre: tuple[float, float],radii:float,gradient: Gradient = Gradient(),inverse=False):
+    def __init__(self,rCentre: tuple[float, float]=(0.5,0.5),radii:float=1,gradient: Gradient = Gradient(),inverse=False):
         super().__init__(rCentre,(radii,radii),gradient,0.0,inverse)
 
+    def getMask(self, ndShape):
+        if ndShape[0]>ndShape[1]:self.radii=(self.radii[0],self.radii[0]*ndShape[1]/ndShape[0])
+        else:self.radii=(self.radii[1]*ndShape[0]/ndShape[1],self.radii[1])
+        return super().getMask(ndShape)
+
 class RectangularMask(Mask):
-    def __init__(self,rCentre: tuple[float, float],sides: tuple[float, float],
+    def __init__(self,rCentre: tuple[float, float]=(0.5,0.5),sides: tuple[float, float]=(1,1),
                 gradient: Gradient = Gradient(),theta: float = 0.0,inverse=False):
         self.rCentre = rCentre
         self.sides = sides

@@ -267,11 +267,11 @@ GPU CuPy
 
 ---
 
-# Phase 6 — Advanced Effects
+# Phase 6 — Advanced Transforms
 
 Only after convolution.
 
-Interesting effects:
+Interesting Transforms:
 
 * Fisheye
 * Polar Transform
